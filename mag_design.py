@@ -2,7 +2,8 @@
 # coding: utf-8
 
 # In[1]:
-
+#
+#
 
 get_ipython().run_line_magic('matplotlib', 'inline')
 import pandas as pd
@@ -30,8 +31,8 @@ mu_0=4*np.pi/10000000
 
 def mag_material(P1,B1,fsw1,P2,B2,fsw2,P3,B3,fsw3,c_guess,x_guess,y_guess):
     from scipy.optimize import fsolve
-    
-# The equations are defined in such a way that x[0]=c, x[1]=x, x[2]=y for the three points selected    
+
+# The equations are defined in such a way that x[0]=c, x[1]=x, x[2]=y for the three points selected
     def equations(x):
         return [P1-x[0]*fsw1**x[1]*B1**x[2], P2-x[0]*fsw2**x[1]*B2**x[2],P3-x[0]*fsw3**x[1]*B3**x[2]]
 
@@ -39,9 +40,9 @@ def mag_material(P1,B1,fsw1,P2,B2,fsw2,P3,B3,fsw3,c_guess,x_guess,y_guess):
     x_guess=[c_guess,x_guess,y_guess]
     c_sol,x_sol,y_sol=fsolve(equations,x_guess)
     return c_sol,x_sol,y_sol
-    
-    
-####################################################################    
+
+
+####################################################################
 # Core losses equation per unit of volume
 # INPUT: losses coefficients c,x,y
 # The units as provided by mag_material function
@@ -55,7 +56,7 @@ def core_losses_per_vol(c,x,y,Bac,fsw):
     return core_loss
 
 
-####################################################################    
+####################################################################
 # Core losses equation per unit of volume and total
 # INPUT: core losses per unit of volume (prev equation) and volume
 # The units losses_volume-->kW/m3 and Vol-->m3
@@ -172,7 +173,7 @@ def N_opt_tr(Ae,WA,WF,WFpri,WFsec,rho,rt,Lm,Vin,D,Irms_pri,Irms_sec,c,x,y,fsw,Vo
 # and an additional -1 because the condition was not fulfilled so the previous value is selected.
     return N-2
 
-def N_opt_ind(Ae,WA,WF,Ipk,Iavg,Irms,Lavg,Lind,rho,c,x,y,fsw,Vol): 
+def N_opt_ind(Ae,WA,WF,Ipk,Iavg,Irms,Lavg,Lind,rho,c,x,y,fsw,Vol):
     N=1
     Copper_loss=100000000;
     Core_loss=100000000;
@@ -217,14 +218,14 @@ cores.head()
 ######################################################################################
 # INPUT: all variables for the previously defined equations
 # The units are as defined in the previous functions
-# Vtr-->V,  fsw-->Hz, Bsat-->T , c,x,y-->defined by mag_material function, 
+# Vtr-->V,  fsw-->Hz, Bsat-->T , c,x,y-->defined by mag_material function,
 # Lmag-->H (1 for not required), Irms-->Arms, rho-->ohm·meter, To, Tmax-->ºC
 # OUTPUT: core part, copper losses, core losses, final Temp, Nopt, Nmin, Nsel
 # The units are SI
 ######################################################################################
 
 def opt_trans(Vtr,Dtr,fsw,Bsat,mu_r,c,x,y,Lmag,WF,Wpri,Wsec,Irms_pri,Irms_sec,rho,To,Tmax):
-   
+
     Tsw=1/fsw
 
     for i in cores.index:
@@ -232,7 +233,7 @@ def opt_trans(Vtr,Dtr,fsw,Bsat,mu_r,c,x,y,Lmag,WF,Wpri,Wsec,Irms_pri,Irms_sec,rh
         # and used to avoid an error.
         if cores['Part'][i]=="end":
             break
-        #Calculation of the minimum number of turns (only dependent on the core and the switching frequency)    
+        #Calculation of the minimum number of turns (only dependent on the core and the switching frequency)
         Nmin_i=N_min_tr(Vtr,Tsw*Dtr,cores['Ae (m2)'][i],Bsat)
         Nopt_i=N_opt_tr(cores['Ae (m2)'][i],cores['Aw (m2)'][i],WF,Wpri,Wsec,rho,rtr,cores['lm (m)'][i],Vtr,Dtr,Irms_pri,Irms_sec,c,x,y,fsw,cores['Ve (m3)'][i])
         if (Nopt_i>Nmin_i):
@@ -285,7 +286,7 @@ opt_trans(Vtr,Dtr,fsw,Bsat, mu_r,c,x,y,1,WF,Wpri,Wsec,Irms_pri,Irms_sec,rho,To,T
 # OPTIMUM DESIGN OF THE INDUCTOR
 #(CHECKED WITH MATHCAD)
 def opt_inductor(fsw,Bsat,mu_r,c,x,y,Lind,WF,Iavg,Ipk,Irms,rho,To,Tmax):
-   
+
     Tsw=1/fsw
 
     for i in cores.index:
@@ -293,14 +294,14 @@ def opt_inductor(fsw,Bsat,mu_r,c,x,y,Lind,WF,Iavg,Ipk,Irms,rho,To,Tmax):
         # and used to avoid an error.
         if cores['Part'][i]=="end":
             break
-        #Calculation of the minimum number of turns (only dependent on the core and the switching frequency)    
+        #Calculation of the minimum number of turns (only dependent on the core and the switching frequency)
         Nmin_i= N_min_ind(Lind,Ipk,Bsat,cores['Ae (m2)'][i])
-        Nopt_i= N_opt_ind(cores['Ae (m2)'][i],cores['Aw (m2)'][i],WF,Ipk,Iavg,Irms,cores['lm (m)'][i],Lind,rho,c,x,y,fsw,cores['Ve (m3)'][i]) 
+        Nopt_i= N_opt_ind(cores['Ae (m2)'][i],cores['Aw (m2)'][i],WF,Ipk,Iavg,Irms,cores['lm (m)'][i],Lind,rho,c,x,y,fsw,cores['Ve (m3)'][i])
         if (Nopt_i>Nmin_i):
             Nsel_i=Nopt_i
         else:
             Nsel_i=Nmin_i
-       
+
         Bac=Lind*(Ipk-Iavg)/Nsel_i/cores['Ae (m2)'][i]*10**3
         core_loss=core_losses(c,x,y,Bac,fsw,cores['Ve (m3)'][i])
         copper_loss=copper_losses(Irms,cores['Aw (m2)'][i]*WF/Nsel_i,cores['lm (m)'][i]*Nsel_i,rho)
@@ -315,4 +316,3 @@ def opt_inductor(fsw,Bsat,mu_r,c,x,y,Lind,WF,Iavg,Ipk,Irms,rho,To,Tmax):
 
 
 opt_inductor(30000,0.44,2200,6.198*10**-13,1.721,2.73,0.000334,0.3,500/18,28,27.7,rho,40,100)
-
