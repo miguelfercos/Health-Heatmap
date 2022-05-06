@@ -1,0 +1,17 @@
+Vin=150
+
+P=500
+
+L=84u
+fsw=100000
+
+//mode=1 //0-Boost;1-Buck
+
+
+D1=100/150
+D2=0.0
+phi_python=0.2
+phi=360.0*phi_python
+
+Vout=Vin*D1/(1-D2)
+Rload=Vout*Vout/P
