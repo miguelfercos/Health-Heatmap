@@ -68,7 +68,7 @@ def Id_max_T(Id_max_25,Id_max_100,Tj):
 
 
 # MOSFET data
-MOSFETs=pd.read_excel(r'D:\Trabajo\HC MathCad\Semiconductores\Space Components.xls',sheet_name="MOSFETs")
+MOSFETs=pd.read_excel(r'.\Space Components.xls',sheet_name="MOSFETs")
 MOSFETs.tail()
 
 
@@ -81,7 +81,7 @@ def opt_MOSFET(Vds,Id,Irms,ZVS,ZCS,Vds_sw_on,Vds_sw_off,Ids_sw_on,Ids_sw_off,Vdr
     Pmos_opt=100000
     sel=666
     for i in MOSFETs.index:
-     
+
         #For consistency with MathCad, which uses end as closing indentifier. Not necessary in Python
         # and used to avoid an error.
         if (MOSFETs['Part'][i]=="end"):
@@ -90,17 +90,17 @@ def opt_MOSFET(Vds,Id,Irms,ZVS,ZCS,Vds_sw_on,Vds_sw_off,Ids_sw_on,Ids_sw_off,Vdr
             continue
         Coss=MOSFETs['Coss (pF)'][i]*10**-12
         Qg=MOSFETs['Qg (nC)'][i]*10**-9
-        
+
         if (MOSFETs['Vds (V)'][i]<Vds):
             continue
-       #Losses calculation     
+       #Losses calculation
         Pmos_gate=gate_sw_losses(Qg,Vdr,fsw)
-        
+
         if (ZVS==1):
             Pmos_coss=Coss_sw_losses(Coss,Vds_sw,fsw)
         else:
             Pmos_coss=0
-            
+
         if (ZVS==1 and ZCS==1):
             Pmos_sw=0
         elif (ZVS==0 and ZCS==0):
@@ -109,7 +109,7 @@ def opt_MOSFET(Vds,Id,Irms,ZVS,ZCS,Vds_sw_on,Vds_sw_off,Ids_sw_on,Ids_sw_off,Vdr
             Pmos_sw=sw_losses(Vds_sw_off,Ids_sw_off,fsw,Qg,Idr)
         else:
             Pmos_sw=sw_losses(Vds_sw_on,Ids_sw_on,fsw,Qg,Idr)
-        
+
         Tj=To
         Tj_end=Tj+0.2
         while (Tj_end<Tj-0.1 or Tj_end>Tj+0.1):
@@ -120,13 +120,13 @@ def opt_MOSFET(Vds,Id,Irms,ZVS,ZCS,Vds_sw_on,Vds_sw_off,Ids_sw_on,Ids_sw_off,Vdr
             Tj_end=To+Pmos_tot*MOSFETs['Rth jc (oC/W)'][i]
             if (Tj_end>MOSFETs['Tj_max (oC)'][i]):
                 break
-        
+
         if (Tj_end>MOSFETs['Tj_max (oC)'][i]):
             continue
-        
+
         if ((Id_max_T(MOSFETs['Id (A @25oC)'][i],MOSFETs['Id (A @100oC)'][i],Tj_end)<Id)):
             continue
-        
+
         if Pmos_tot<Pmos_opt:
             Pmos_opt=Pmos_tot
             Pmos_sw_opt=Pmos_sw
@@ -138,12 +138,11 @@ def opt_MOSFET(Vds,Id,Irms,ZVS,ZCS,Vds_sw_on,Vds_sw_off,Ids_sw_on,Ids_sw_off,Vdr
     if sel==666:
         return "NMV"
     return (MOSFETs['Part'][sel],Pmos_cond_opt,Pmos_sw_opt,Pmos_coss_opt,Pmos_gate_opt,Pmos_opt,Tj_opt)
-            
-        
+
+
 
 
 # In[57]:
 
 
 opt_MOSFET(100,10,12,0,0,100,100,30,30,20,1,100000,40)
-
