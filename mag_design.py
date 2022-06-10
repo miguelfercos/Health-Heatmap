@@ -204,7 +204,7 @@ N_opt_ind(0.001170,0.000928,0.3,28,500/18,27.7,0.49500,0.000334,rho,6.198*10**-1
 
 
 # Cores data
-cores=pd.read_excel(r'D:\Trabajo\HC MathCad\Magnetics\trafos.xls',sheet_name="Cores")
+cores=pd.read_excel(r'.\trafos.xls',sheet_name="Cores")
 cores.head()
 
 
