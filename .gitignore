@@ -1,0 +1,11 @@
+
+*.jpg
+Space Components.xls
+trafos_test.xls
+untitled
+untitled1
+Measurements/untitled.png
+Measurements/test_heatsink_gan.xlsx
+__pycache__/MOS_design.cpython-38.pyc
+__pycache__/mag_design.cpython-38.pyc
+.ipynb_checkpoints/4S Buck Boost-checkpoint.ipynb

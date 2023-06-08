@@ -66,7 +66,7 @@ losses=pin-pout;%CSV.losses;
 
 figure
 losses_rearr=reshape (losses,[size(unique(d2),1),size(unique(d1),1)])
-contourf(unique(d1),unique(d2),losses_rearr,75,'LineColor','none')
+contourf(unique(d1),unique(d2),losses_rearr-6,75,'LineColor','none')
 colormap(hot) %flipud(hot) para representear colores inversos
 colorbar;
 d1b=linspace(min(unique(d1)),max(unique(d1)));
@@ -85,3 +85,4 @@ axis([min(unique(d1)) max(unique(d1)) min(unique(d2)),max(unique(d2))])
 %  %view(ax,[0,90]);
 %  colormap(jet);
 %  colorbar;
+caxis([6.9 30])

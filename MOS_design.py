@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
-get_ipython().run_line_magic('matplotlib', 'inline')
+# get_ipython().run_line_magic('matplotlib', 'inline')
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,7 +10,6 @@ import matplotlib.patches as patches
 sns.set(style="darkgrid")
 
 
-# In[2]:
 
 
 #validated
@@ -23,15 +19,12 @@ def Rdson_temp(Rdson_25,Rdson_125,Tj):
     return Rdson_Tj
 
 
-# In[3]:
-
 
 #validated
 def Coss_sw_losses(Coss,Vds,fsw):
     return Coss*Vds**2*fsw/2
 
 
-# In[4]:
 
 
 #validated
