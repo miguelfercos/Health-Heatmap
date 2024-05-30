@@ -86,3 +86,8 @@ axis([min(unique(d1)) max(unique(d1)) min(unique(d2)),max(unique(d2))])
 %  colormap(jet);
 %  colorbar;
 caxis([6.9 30])
+% Create a table
+T = table(vin, iin, iout, vout, pin, pout, losses, d1, d2);
+
+% Display the table
+disp(T);
